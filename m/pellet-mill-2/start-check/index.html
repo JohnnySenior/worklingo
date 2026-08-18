@@ -143,6 +143,8 @@
 
   /* hide the non-selected reference lines */
   .ref-ko,.ref-uz,.ref-vi{display:none}
+  /* tanlangan til yuqorida turadi — uning bo'sh qatori joy egallamasin */
+  .ref-ko:empty,.ref-uz:empty,.ref-vi:empty{display:none!important}
   body[data-lang="ko"] .ref-uz{display:block}
   body[data-lang="uz"] .ref-ko{display:block}
   body[data-lang="vi"] .ref-ko{display:block}
@@ -181,7 +183,9 @@
     <p class="plate__id">MACHINE ID · 기계번호</p>
     <h1 class="plate__name" id="m-name">성형기 #2</h1>
     <p class="plate__task" id="t-main">Ishga tushirishdan oldingi tekshiruv</p>
-    <p class="plate__task-sub" id="t-ref">시작 전 점검</p>
+    <p class="plate__task-sub ref-ko" data-t="ko">시작 전 점검</p>
+    <p class="plate__task-sub ref-uz" data-t="uz"></p>
+    <p class="plate__task-sub ref-vi" data-t="vi"></p>
   </header>
 
   <nav class="langbar" aria-label="언어 선택 / Til tanlash">
@@ -284,7 +288,6 @@ const SOP = {
 /* ── pastdan boshlab kodga tegma ────────────── */
 (function () {
   const LANGS = ["ko", "uz", "vi"];
-  const other = l => (l === "ko" ? "uz" : "ko");
   const esc = s => String(s).replace(/[&<>"]/g, c =>
     ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 
@@ -299,7 +302,7 @@ const SOP = {
     return `<figure class="shot" style="margin:16px 0 0">
       <img src="${esc(step.img)}" alt="" loading="lazy"
         onerror="this.parentNode.querySelector('.shot__empty').hidden=false;this.remove()">
-      <div class="shot__empty" hidden>${esc(step.img)}</div>
+      <div class="shot__empty" hidden title="${esc(step.img)}"></div>
       ${ring}
     </figure>`;
   }
@@ -323,7 +326,9 @@ const SOP = {
         <div class="step__num">${String(i + 1).padStart(2, "0")}</div>
         <div class="step__text">
           <p class="step__primary" data-p="${i}"></p>
-          <p class="step__ref" data-r="${i}"></p>
+          <p class="step__ref ref-ko" data-r="${i}" data-l="ko"></p>
+          <p class="step__ref ref-uz" data-r="${i}" data-l="uz"></p>
+          <p class="step__ref ref-vi" data-r="${i}" data-l="vi"></p>
         </div>
       </div>
       ${shot(s)}
@@ -334,42 +339,51 @@ const SOP = {
   alarm.innerHTML = `
     <p class="alarm__label">⚠ WARNING · 경고</p>
     <p class="alarm__cond" id="a-cond"></p>
-    <p class="alarm__cond-ref" id="a-cond-ref"></p>
+    <p class="alarm__cond-ref ref-ko" data-ac="ko"></p>
+    <p class="alarm__cond-ref ref-uz" data-ac="uz"></p>
+    <p class="alarm__cond-ref ref-vi" data-ac="vi"></p>
     <p class="alarm__act" id="a-act"></p>
-    <p class="alarm__act-ref" id="a-act-ref"></p>`;
+    <p class="alarm__act-ref ref-ko" data-aa="ko"></p>
+    <p class="alarm__act-ref ref-uz" data-aa="uz"></p>
+    <p class="alarm__act-ref ref-vi" data-aa="vi"></p>`;
 
   document.getElementById("sig-author").textContent = SOP.meta.author;
   document.getElementById("sig-reviewer").textContent = SOP.meta.reviewer;
   document.getElementById("sig-date").textContent = SOP.meta.date;
 
   function render(lang) {
-    const ref = other(lang);
     document.body.dataset.lang = lang;
     document.documentElement.lang = lang;
 
+    /* Har bir til uchun alohida qator to'ldiriladi. Tanlangan til bo'sh
+       qoldiriladi — u yuqorida asosiy qatorda turadi. Ekranda CSS faqat
+       bittasini ko'rsatadi, chop etganda uchalasi ham chiqadi. */
+    const fill = (el, text) => { if (el) el.textContent = text || ""; };
+    const refs = (pick, source) =>
+      LANGS.forEach(l => fill(pick(l), l === lang ? "" : source[l]));
+
     document.getElementById("t-main").textContent = SOP.task[lang];
-    document.getElementById("t-ref").textContent = SOP.task[ref];
+    refs(l => document.querySelector(`[data-t="${l}"]`), SOP.task);
 
     SOP.steps.forEach((s, i) => {
       document.querySelector(`[data-p="${i}"]`).textContent = s[lang];
-      document.querySelector(`[data-r="${i}"]`).textContent = s[ref];
+      refs(l => document.querySelector(`[data-r="${i}"][data-l="${l}"]`), s);
     });
 
     document.querySelectorAll(".note").forEach(n => {
       const parts = n.querySelector(".note__primary").dataset.k.split("§");
       const map = { ko: parts[0], uz: parts[1], vi: parts[2] };
       n.querySelector(".note__primary").textContent = map[lang];
-      n.querySelectorAll(".note__ref").forEach(el => (el.textContent = ""));
-      n.querySelector(".ref-" + ref).textContent = map[ref];
+      refs(l => n.querySelector(".ref-" + l), map);
     });
 
     document.getElementById("a-cond").textContent = SOP.alarm.condition[lang];
-    document.getElementById("a-cond-ref").textContent = SOP.alarm.condition[ref];
+    refs(l => document.querySelector(`[data-ac="${l}"]`), SOP.alarm.condition);
     document.getElementById("a-act").textContent = "→ " + SOP.alarm.action[lang];
-    document.getElementById("a-act-ref").textContent = SOP.alarm.action[ref];
+    refs(l => document.querySelector(`[data-aa="${l}"]`), SOP.alarm.action);
 
     document.querySelectorAll(".shot__empty").forEach(el => {
-      if (!el.hidden) el.textContent = emptyShot[lang];
+      el.textContent = emptyShot[lang];
     });
 
     document.querySelectorAll(".lang").forEach(b =>

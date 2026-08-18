@@ -263,6 +263,19 @@ yangi vazifa o'sha ro'yxatda o'zi paydo bo'ladi. Qayta chop etish shart emas.
 
 ---
 
+## Qog'ozga chop etish
+
+Sahifada `Ctrl+P` (Mac'da `Cmd+P`) bosasan. Chop etish versiyasida:
+
+- til tugmalari yo'qoladi
+- **uchala til birdan chiqadi** — koreyscha, o'zbekcha, vetnamcha
+- qizil ogohlantirish bloki oq fonda qora ramka bo'lib chiqadi (siyoh tejaladi)
+
+Ya'ni bitta qog'ozni mashinaga ilib qo'ysang, uchala ishchi ham o'qiy oladi.
+Buni ham laminatsiya qilsang yaxshi bo'ladi.
+
+---
+
 ## 6. O'zgarishni internetga qanday chiqaraman
 
 Uch buyruq. Papka ichida turib:
