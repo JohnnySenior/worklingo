@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>성형기 #2 — 작업 안내 / Ish ko'rsatmasi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14171A;
+    --paper:#E8EAE7;
+    --card:#FFFFFF;
+    --signal:#FFD100;
+    --danger:#D42B1E;
+    --steel:#5A6470;
+    --rule:4px solid var(--ink);
+    --sans:"IBM Plex Sans KR","IBM Plex Sans","Malgun Gothic",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:18px;
+    line-height:1.45;
+  }
+
+  .sheet{max-width:640px;margin:0 auto;background:var(--card);min-height:100vh;
+    box-shadow:0 0 0 1px rgba(20,23,26,.08)}
+
+  /* ── hazard stripe ─────────────────────────── */
+  .stripe{
+    height:14px;
+    background:repeating-linear-gradient(-45deg,
+      var(--ink) 0 14px, var(--signal) 14px 28px);
+  }
+
+  /* ── machine nameplate ─────────────────────── */
+  .plate{background:var(--signal);padding:18px 20px 16px;border-bottom:var(--rule)}
+  .plate__id{
+    font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink);opacity:.7;margin:0 0 6px
+  }
+  .plate__name{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.05}
+  .plate__sub{
+    font-family:var(--mono);font-size:18px;font-weight:600;letter-spacing:.08em;
+    text-transform:uppercase;color:#4A4326;margin:6px 0 0
+  }
+
+  /* ── section label ─────────────────────────── */
+  .label{
+    font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--steel);
+    margin:0;padding:16px 20px 14px;border-bottom:2px solid var(--ink)
+  }
+
+  /* ── task list ─────────────────────────────── */
+  .tasks{list-style:none;margin:0;padding:0}
+  .tasks > li{border-bottom:var(--rule)}
+
+  .task{
+    display:flex;gap:14px;align-items:center;
+    min-height:96px;padding:18px 20px;
+    text-decoration:none;color:var(--ink);
+    background:var(--card);
+    transition:background .12s ease;
+  }
+  .task:hover{background:#F3F4F1}
+  .task:active{background:var(--signal)}
+  .task:focus-visible{outline:4px solid var(--signal);outline-offset:-4px}
+
+  .task__num{
+    flex:0 0 auto;
+    background:var(--ink);color:var(--signal);
+    font-family:var(--mono);font-weight:700;font-size:22px;
+    width:46px;height:46px;display:grid;place-items:center;
+  }
+  .task__text{flex:1;min-width:0}
+  .task__primary{font-size:23px;font-weight:700;line-height:1.25;margin:0;letter-spacing:-.01em}
+  .task__ref{font-size:18px;font-weight:500;color:var(--steel);margin:5px 0 0;line-height:1.3}
+  .task__go{
+    flex:0 0 auto;font-family:var(--mono);font-size:30px;font-weight:700;
+    color:var(--ink);line-height:1
+  }
+
+  /* ── footer ────────────────────────────────── */
+  .foot{padding:20px;font-family:var(--mono);font-size:13px;color:var(--steel);
+    letter-spacing:.03em;margin:0}
+
+  @media (max-width:380px){
+    .plate__name{font-size:28px}
+    .task__primary{font-size:20px}
+    .task{min-height:88px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important}
+  }
+
+  /* ── paper version ─────────────────────────── */
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .sheet{box-shadow:none;max-width:none}
+    .task{break-inside:avoid}
+    .task__go{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <div class="stripe" aria-hidden="true"></div>
+
+  <header class="plate">
+    <p class="plate__id">MACHINE ID · 기계번호</p>
+    <h1 class="plate__name">성형기 #2</h1>
+    <p class="plate__sub">Pellet Mill #2</p>
+  </header>
+
+  <p class="label">작업 목록 · Vazifalar</p>
+
+  <ol class="tasks">
+
+    <li>
+      <a class="task" href="start-check/">
+        <span class="task__num">01</span>
+        <span class="task__text">
+          <span class="task__primary">Ishga tushirishdan oldingi tekshiruv</span>
+          <span class="task__ref">시작 전 점검</span>
+        </span>
+        <span class="task__go" aria-hidden="true">›</span>
+      </a>
+    </li>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         YANGI VAZIFA QO'SHISH
+
+         Yangi SOP papkasi yasagandan keyin (masalan: filter-change/),
+         shu yerga pastdagi blokni copy-paste qilib qo'shasan.
+         Faqat 3 joyni o'zgartir: raqam, havola, ikkita matn.
+
+         QR KODGA TEGMAYSAN — u shu sahifaga bog'langan,
+         qayta chop etish shart emas.
+
+    <li>
+      <a class="task" href="filter-change/">
+        <span class="task__num">02</span>
+        <span class="task__text">
+          <span class="task__primary">Filtrni almashtirish</span>
+          <span class="task__ref">필터 교체</span>
+        </span>
+        <span class="task__go" aria-hidden="true">›</span>
+      </a>
+    </li>
+
+         ═══════════════════════════════════════════════════════════ -->
+
+  </ol>
+
+  <div class="stripe" aria-hidden="true"></div>
+
+  <p class="foot">WORKLINGO · 성형기 #2</p>
+</div>
+
+</body>
+</html>

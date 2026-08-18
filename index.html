@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WorkLingo — 기계 목록 / Mashinalar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14171A;
+    --paper:#E8EAE7;
+    --card:#FFFFFF;
+    --signal:#FFD100;
+    --danger:#D42B1E;
+    --steel:#5A6470;
+    --rule:4px solid var(--ink);
+    --sans:"IBM Plex Sans KR","IBM Plex Sans","Malgun Gothic",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:18px;
+    line-height:1.45;
+  }
+
+  .sheet{max-width:640px;margin:0 auto;background:var(--card);min-height:100vh;
+    box-shadow:0 0 0 1px rgba(20,23,26,.08)}
+
+  .stripe{
+    height:14px;
+    background:repeating-linear-gradient(-45deg,
+      var(--ink) 0 14px, var(--signal) 14px 28px);
+  }
+
+  .plate{background:var(--signal);padding:18px 20px 16px;border-bottom:var(--rule)}
+  .plate__id{
+    font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink);opacity:.7;margin:0 0 6px
+  }
+  .plate__name{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.05}
+  .plate__sub{font-size:18px;font-weight:400;color:#4A4326;margin:6px 0 0}
+
+  .label{
+    font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--steel);
+    margin:0;padding:16px 20px 14px;border-bottom:2px solid var(--ink)
+  }
+
+  .machines{list-style:none;margin:0;padding:0}
+  .machines > li{border-bottom:var(--rule)}
+
+  .machine{
+    display:flex;gap:14px;align-items:center;
+    min-height:96px;padding:18px 20px;
+    text-decoration:none;color:var(--ink);
+    background:var(--card);
+    transition:background .12s ease;
+  }
+  .machine:hover{background:#F3F4F1}
+  .machine:active{background:var(--signal)}
+  .machine:focus-visible{outline:4px solid var(--signal);outline-offset:-4px}
+
+  .machine__tag{
+    flex:0 0 auto;
+    background:var(--ink);color:var(--signal);
+    font-family:var(--mono);font-weight:700;font-size:18px;letter-spacing:.04em;
+    min-width:46px;height:46px;padding:0 10px;display:grid;place-items:center;
+  }
+  .machine__text{flex:1;min-width:0}
+  .machine__primary{font-size:23px;font-weight:700;line-height:1.25;margin:0;letter-spacing:-.01em}
+  .machine__ref{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--steel);
+    margin:5px 0 0;line-height:1.3;letter-spacing:.06em}
+  .machine__go{
+    flex:0 0 auto;font-family:var(--mono);font-size:30px;font-weight:700;
+    color:var(--ink);line-height:1
+  }
+
+  .foot{padding:20px;font-family:var(--mono);font-size:13px;color:var(--steel);
+    letter-spacing:.03em;margin:0}
+
+  @media (max-width:380px){
+    .plate__name{font-size:28px}
+    .machine__primary{font-size:20px}
+    .machine{min-height:88px}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none!important}
+  }
+
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .sheet{box-shadow:none;max-width:none}
+    .machine{break-inside:avoid}
+    .machine__go{display:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="sheet">
+  <div class="stripe" aria-hidden="true"></div>
+
+  <header class="plate">
+    <p class="plate__id">WORKLINGO</p>
+    <h1 class="plate__name">기계 목록</h1>
+    <p class="plate__sub">Mashinalar ro'yxati</p>
+  </header>
+
+  <p class="label">기계 · Mashinalar</p>
+
+  <ol class="machines">
+
+    <li>
+      <a class="machine" href="m/pellet-mill-2/">
+        <span class="machine__tag">#2</span>
+        <span class="machine__text">
+          <span class="machine__primary">성형기 #2</span>
+          <span class="machine__ref">Pellet Mill #2</span>
+        </span>
+        <span class="machine__go" aria-hidden="true">›</span>
+      </a>
+    </li>
+
+    <!-- ═══════════════════════════════════════════════════════════
+         YANGI MASHINA QO'SHISH
+
+         m/ ichida yangi papka yasa (masalan: m/hammer-mill-1/),
+         ichiga index.html qo'y, keyin shu yerga pastdagi blokni
+         copy-paste qilib qo'shasan. Har bir mashinaning
+         QR kodi o'ziga alohida yasaladi.
+
+    <li>
+      <a class="machine" href="m/hammer-mill-1/">
+        <span class="machine__tag">#1</span>
+        <span class="machine__text">
+          <span class="machine__primary">해머밀 #1</span>
+          <span class="machine__ref">Hammer Mill #1</span>
+        </span>
+        <span class="machine__go" aria-hidden="true">›</span>
+      </a>
+    </li>
+
+         ═══════════════════════════════════════════════════════════ -->
+
+  </ol>
+
+  <div class="stripe" aria-hidden="true"></div>
+
+  <p class="foot">WORKLINGO</p>
+</div>
+
+</body>
+</html>

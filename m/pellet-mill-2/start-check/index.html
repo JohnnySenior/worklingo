@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>성형기 #2 — 시작 전 점검</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#14171A;
+    --paper:#E8EAE7;
+    --card:#FFFFFF;
+    --signal:#FFD100;
+    --danger:#D42B1E;
+    --steel:#5A6470;
+    --rule:4px solid var(--ink);
+    --sans:"IBM Plex Sans KR","IBM Plex Sans","Malgun Gothic",system-ui,sans-serif;
+    --mono:"IBM Plex Mono",ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+  html{-webkit-text-size-adjust:100%}
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:18px;
+    line-height:1.45;
+  }
+
+  .sheet{max-width:640px;margin:0 auto;background:var(--card);min-height:100vh;
+    box-shadow:0 0 0 1px rgba(20,23,26,.08)}
+
+  /* ── hazard stripe ─────────────────────────── */
+  .stripe{
+    height:14px;
+    background:repeating-linear-gradient(-45deg,
+      var(--ink) 0 14px, var(--signal) 14px 28px);
+  }
+  .stripe--danger{
+    background:repeating-linear-gradient(-45deg,
+      var(--ink) 0 14px, var(--danger) 14px 28px);
+  }
+
+  /* ── machine nameplate ─────────────────────── */
+  .plate{background:var(--signal);padding:18px 20px 16px;border-bottom:var(--rule)}
+  .plate__id{
+    font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink);opacity:.7;margin:0 0 6px
+  }
+  .plate__name{font-size:34px;font-weight:700;letter-spacing:-.02em;margin:0;line-height:1.05}
+  .plate__task{font-size:19px;font-weight:600;margin:10px 0 0}
+  .plate__task-sub{font-size:16px;font-weight:400;color:#4A4326;margin:2px 0 0}
+
+  /* ── language switch (control panel toggles) ─ */
+  .langbar{
+    position:sticky;top:0;z-index:20;
+    display:flex;gap:0;
+    background:var(--ink);
+    border-bottom:var(--rule);
+  }
+  .lang{
+    flex:1;appearance:none;border:0;cursor:pointer;
+    background:transparent;color:#9AA3AD;
+    font-family:var(--mono);font-weight:600;font-size:14px;letter-spacing:.06em;
+    padding:16px 6px 14px;min-height:52px;
+    border-bottom:5px solid transparent;
+    transition:color .12s ease,border-color .12s ease;
+  }
+  .lang:hover{color:#E8EAE7}
+  .lang[aria-pressed="true"]{color:var(--signal);border-bottom-color:var(--signal)}
+  .lang:focus-visible{outline:3px solid var(--signal);outline-offset:-3px}
+
+  /* ── steps ─────────────────────────────────── */
+  .steps{list-style:none;margin:0;padding:0}
+  .step{border-bottom:var(--rule);padding:22px 20px 26px;display:block}
+
+  .step__head{display:flex;gap:14px;align-items:flex-start}
+  .step__num{
+    flex:0 0 auto;
+    background:var(--ink);color:var(--signal);
+    font-family:var(--mono);font-weight:700;font-size:22px;
+    width:46px;height:46px;display:grid;place-items:center;
+  }
+  .step__text{flex:1;min-width:0;padding-top:1px}
+  .step__primary{font-size:23px;font-weight:700;line-height:1.25;margin:0;letter-spacing:-.01em}
+  .step__ref{font-size:16px;font-weight:500;color:var(--steel);margin:5px 0 0;line-height:1.3}
+
+  /* ── photo with target ring ────────────────── */
+  .shot{position:relative;margin:16px 0 0;background:#DDE0DC;border:2px solid var(--ink)}
+  .shot img{display:block;width:100%;height:auto}
+  .shot__empty{
+    display:grid;place-items:center;aspect-ratio:4/3;text-align:center;padding:16px;
+    font-family:var(--mono);font-size:13px;letter-spacing:.06em;color:var(--steel);
+  }
+  .ring{
+    position:absolute;left:var(--x);top:var(--y);
+    width:23%;aspect-ratio:1;transform:translate(-50%,-50%);
+    border:5px solid var(--danger);border-radius:50%;
+    box-shadow:0 0 0 3px rgba(255,255,255,.75);
+    pointer-events:none;
+    animation:pulse 1.9s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{transform:translate(-50%,-50%) scale(1);opacity:1}
+    50%{transform:translate(-50%,-50%) scale(1.08);opacity:.72}
+  }
+
+  /* ── action + escalation notes ─────────────── */
+  .note{margin:16px 0 0;padding:12px 14px;background:#F3F4F1;border-left:6px solid var(--ink)}
+  .note__primary{font-size:18px;font-weight:600;margin:0}
+  .note__ref{font-size:15px;color:var(--steel);margin:3px 0 0}
+
+  .note--stop{background:#FDEEEC;border-left-color:var(--danger)}
+  .note--stop .note__primary{color:#8E1C12}
+  .note__tag{
+    display:inline-block;font-family:var(--mono);font-size:11px;font-weight:700;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--danger);margin:0 0 6px
+  }
+
+  /* ── big warning block ─────────────────────── */
+  .alarm{background:var(--danger);color:#fff;padding:24px 20px}
+  .alarm__label{
+    font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;opacity:.85;margin:0 0 10px
+  }
+  .alarm__cond{font-size:28px;font-weight:700;margin:0;line-height:1.15}
+  .alarm__cond-ref{font-size:17px;font-weight:500;margin:4px 0 0;opacity:.88}
+  .alarm__act{font-size:21px;font-weight:600;margin:16px 0 0;padding-top:14px;
+    border-top:2px solid rgba(255,255,255,.35)}
+  .alarm__act-ref{font-size:16px;margin:3px 0 0;opacity:.88}
+
+  /* ── signature block ───────────────────────── */
+  .sig{padding:20px;font-family:var(--mono);font-size:13px;color:var(--steel);
+    display:grid;grid-template-columns:auto 1fr;gap:6px 16px;letter-spacing:.03em}
+  .sig dt{font-weight:600;color:var(--ink)}
+  .sig dd{margin:0}
+
+  /* hide the non-selected reference lines */
+  .ref-ko,.ref-uz,.ref-vi{display:none}
+  body[data-lang="ko"] .ref-uz{display:block}
+  body[data-lang="uz"] .ref-ko{display:block}
+  body[data-lang="vi"] .ref-ko{display:block}
+
+  @media (prefers-reduced-motion:reduce){
+    .ring{animation:none}
+    *{transition:none!important}
+  }
+
+  @media (max-width:380px){
+    .plate__name{font-size:28px}
+    .step__primary{font-size:20px}
+    .alarm__cond{font-size:23px}
+    .lang{font-size:12.5px}
+  }
+
+  /* ── paper version (laminate & hang on machine) */
+  @media print{
+    body{background:#fff;font-size:12pt}
+    .sheet{box-shadow:none;max-width:none}
+    .langbar{display:none}
+    .ring{animation:none}
+    .step{break-inside:avoid;border-bottom:2px solid #000}
+    .ref-ko,.ref-uz,.ref-vi{display:block!important}
+    .alarm{color:#000;background:#fff;border:4px solid #000}
+    .alarm__act{border-top-color:#000}
+  }
+</style>
+</head>
+<body data-lang="uz">
+
+<div class="sheet">
+  <div class="stripe" aria-hidden="true"></div>
+
+  <header class="plate">
+    <p class="plate__id">MACHINE ID · 기계번호</p>
+    <h1 class="plate__name" id="m-name">성형기 #2</h1>
+    <p class="plate__task" id="t-main">Ishga tushirishdan oldingi tekshiruv</p>
+    <p class="plate__task-sub" id="t-ref">시작 전 점검</p>
+  </header>
+
+  <nav class="langbar" aria-label="언어 선택 / Til tanlash">
+    <button class="lang" data-set="ko" aria-pressed="false">한국어</button>
+    <button class="lang" data-set="uz" aria-pressed="true">O'zbekcha</button>
+    <button class="lang" data-set="vi" aria-pressed="false">Tiếng Việt</button>
+  </nav>
+
+  <ol class="steps" id="steps"></ol>
+
+  <div class="stripe stripe--danger" aria-hidden="true"></div>
+  <section class="alarm" id="alarm"></section>
+  <div class="stripe stripe--danger" aria-hidden="true"></div>
+
+  <dl class="sig">
+    <dt>작성</dt><dd id="sig-author">—</dd>
+    <dt>감수</dt><dd id="sig-reviewer">—</dd>
+    <dt>확인</dt><dd id="sig-date">—</dd>
+  </dl>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   FAQAT SHU BLOKNI O'ZGARTIRASAN. Pastdagi kodga tegma.
+   Rasm: yonidagi photos/ papkasiga photo-01.jpg ... deb tashla.
+   ring: rasmda qizil doira qayerda tursin — foizda (chapdan, tepadan).
+   ═══════════════════════════════════════════════════════════ */
+const SOP = {
+  machine: "성형기 #2",
+  task: {
+    ko: "시작 전 점검",
+    uz: "Ishga tushirishdan oldingi tekshiruv",
+    vi: "Kiểm tra trước khi khởi động"
+  },
+  steps: [
+    {
+      ko: "베어링 구리스 확인",
+      uz: "Podshipnik grease'ini tekshir",
+      vi: "Kiểm tra mỡ bôi trơn vòng bi",
+      img: "photos/photo-01.jpg",
+      ring: { x: "50%", y: "50%" },
+      note: {
+        ko: "부족하면 주입한다",
+        uz: "Yetarli bo'lmasa — grease quy",
+        vi: "Nếu thiếu thì bơm thêm"
+      }
+    },
+    {
+      ko: "링다이 커버 볼트 확인",
+      uz: "Ring die qopqog'i boltlarini tekshir",
+      vi: "Kiểm tra bu lông nắp khuôn",
+      img: "photos/photo-02.jpg",
+      ring: { x: "50%", y: "50%" },
+      stop: {
+        ko: "풀려 있으면 직접 조이지 말고 반장에게 알린다",
+        uz: "Bo'shashgan bo'lsa — o'zing tortma, ustaga ayt",
+        vi: "Nếu lỏng, không tự siết — báo tổ trưởng"
+      }
+    },
+    {
+      ko: "호퍼·컨베이어 이물질 확인",
+      uz: "Bunker va konveyerda begona narsa bor-yo'qligini tekshir",
+      vi: "Kiểm tra vật lạ trong phễu và băng tải",
+      img: "photos/photo-03.jpg",
+      ring: { x: "50%", y: "50%" },
+      stop: {
+        ko: "기계가 돌아가는 중에는 절대 손을 넣지 않는다",
+        uz: "Mashina ishlayotganda qo'lingni hech qachon tiqma",
+        vi: "Tuyệt đối không thò tay khi máy đang chạy"
+      }
+    },
+    {
+      ko: "비상정지 버튼 위치 확인",
+      uz: "Favqulodda to'xtatish tugmasi qayerdaligini bil",
+      vi: "Xác định vị trí nút dừng khẩn cấp",
+      img: "photos/photo-04.jpg",
+      ring: { x: "50%", y: "50%" },
+      note: {
+        ko: "손이 닿는 위치인지 확인한다",
+        uz: "Qo'ling yetadigan joydami — tekshir",
+        vi: "Kiểm tra xem có với tới được không"
+      }
+    }
+  ],
+  alarm: {
+    condition: {
+      ko: "암페어 120 초과 시",
+      uz: "Amper 120 dan oshsa",
+      vi: "Khi ampe vượt quá 120"
+    },
+    action: {
+      ko: "속도를 올리지 말고 기계를 정지시킨다",
+      uz: "Tezlikni oshirma — mashinani to'xtat",
+      vi: "Không tăng tốc độ — dừng máy"
+    }
+  },
+  meta: { author: "—", reviewer: "—", date: "2026-08-18" }
+};
+
+/* ── pastdan boshlab kodga tegma ────────────── */
+(function () {
+  const LANGS = ["ko", "uz", "vi"];
+  const other = l => (l === "ko" ? "uz" : "ko");
+  const esc = s => String(s).replace(/[&<>"]/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  const emptyShot = {
+    ko: "사진 넣기", uz: "Rasm qo'sh", vi: "Thêm ảnh"
+  };
+
+  function shot(step) {
+    if (!step.img) return "";
+    const ring = step.ring
+      ? `<span class="ring" style="--x:${esc(step.ring.x)};--y:${esc(step.ring.y)}"></span>` : "";
+    return `<figure class="shot" style="margin:16px 0 0">
+      <img src="${esc(step.img)}" alt="" loading="lazy"
+        onerror="this.parentNode.querySelector('.shot__empty').hidden=false;this.remove()">
+      <div class="shot__empty" hidden>${esc(step.img)}</div>
+      ${ring}
+    </figure>`;
+  }
+
+  function noteBlock(step) {
+    const src = step.stop || step.note;
+    if (!src) return "";
+    const stop = !!step.stop;
+    return `<div class="note ${stop ? "note--stop" : ""}">
+      ${stop ? '<p class="note__tag">STOP · 정지</p>' : ""}
+      <p class="note__primary" data-k="${LANGS.map(l => esc(src[l] || "")).join("§")}"></p>
+      <p class="note__ref ref-ko"></p><p class="note__ref ref-uz"></p><p class="note__ref ref-vi"></p>
+    </div>`;
+  }
+
+  document.getElementById("m-name").textContent = SOP.machine;
+
+  document.getElementById("steps").innerHTML = SOP.steps.map((s, i) => `
+    <li class="step">
+      <div class="step__head">
+        <div class="step__num">${String(i + 1).padStart(2, "0")}</div>
+        <div class="step__text">
+          <p class="step__primary" data-p="${i}"></p>
+          <p class="step__ref" data-r="${i}"></p>
+        </div>
+      </div>
+      ${shot(s)}
+      ${noteBlock(s)}
+    </li>`).join("");
+
+  const alarm = document.getElementById("alarm");
+  alarm.innerHTML = `
+    <p class="alarm__label">⚠ WARNING · 경고</p>
+    <p class="alarm__cond" id="a-cond"></p>
+    <p class="alarm__cond-ref" id="a-cond-ref"></p>
+    <p class="alarm__act" id="a-act"></p>
+    <p class="alarm__act-ref" id="a-act-ref"></p>`;
+
+  document.getElementById("sig-author").textContent = SOP.meta.author;
+  document.getElementById("sig-reviewer").textContent = SOP.meta.reviewer;
+  document.getElementById("sig-date").textContent = SOP.meta.date;
+
+  function render(lang) {
+    const ref = other(lang);
+    document.body.dataset.lang = lang;
+    document.documentElement.lang = lang;
+
+    document.getElementById("t-main").textContent = SOP.task[lang];
+    document.getElementById("t-ref").textContent = SOP.task[ref];
+
+    SOP.steps.forEach((s, i) => {
+      document.querySelector(`[data-p="${i}"]`).textContent = s[lang];
+      document.querySelector(`[data-r="${i}"]`).textContent = s[ref];
+    });
+
+    document.querySelectorAll(".note").forEach(n => {
+      const parts = n.querySelector(".note__primary").dataset.k.split("§");
+      const map = { ko: parts[0], uz: parts[1], vi: parts[2] };
+      n.querySelector(".note__primary").textContent = map[lang];
+      n.querySelectorAll(".note__ref").forEach(el => (el.textContent = ""));
+      n.querySelector(".ref-" + ref).textContent = map[ref];
+    });
+
+    document.getElementById("a-cond").textContent = SOP.alarm.condition[lang];
+    document.getElementById("a-cond-ref").textContent = SOP.alarm.condition[ref];
+    document.getElementById("a-act").textContent = "→ " + SOP.alarm.action[lang];
+    document.getElementById("a-act-ref").textContent = SOP.alarm.action[ref];
+
+    document.querySelectorAll(".shot__empty").forEach(el => {
+      if (!el.hidden) el.textContent = emptyShot[lang];
+    });
+
+    document.querySelectorAll(".lang").forEach(b =>
+      b.setAttribute("aria-pressed", String(b.dataset.set === lang)));
+  }
+
+  document.querySelectorAll(".lang").forEach(b =>
+    b.addEventListener("click", () => render(b.dataset.set)));
+
+  render("uz");
+})();
+</script>
+</body>
+</html>
