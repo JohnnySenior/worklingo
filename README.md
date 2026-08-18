@@ -6,6 +6,31 @@ instruksiyasi. Server yo'q, baza yo'q. Faqat oddiy fayllar + GitHub Pages (bepul
 **Sayt:** https://johnnysenior.github.io/worklingo/m/pellet-mill-2/
 **QR kod:** `qr/pellet-mill-2.svg`
 
+---
+
+## ⚠️ BIR MARTA QILINADIGAN ISH — Pages ni yoqish
+
+Fayllar GitHub'da turibdi, lekin sayt hali **yoqilmagan**. Buni faqat repo
+egasi qila oladi (men API orqali qilolmadim — GitHub ruxsat bermaydi).
+
+Brauzerda ochasan:
+
+**https://github.com/JohnnySenior/worklingo/settings/pages**
+
+Keyin:
+
+1. **Source** degan joyda → `Deploy from a branch` ni tanla
+2. **Branch** → `main`, papka → `/ (root)`
+3. **Save** bos
+
+1–2 daqiqa kutasan, keyin shu manzilni ochasan:
+https://johnnysenior.github.io/worklingo/m/pellet-mill-2/
+
+Buni bir marta qilasan. Undan keyin har `git push` da sayt o'zi yangilanadi.
+
+**Shu ish qilinmaguncha QR kodni chop etma** — skan qilinganda bo'sh sahifa
+chiqadi.
+
 ## Fayllar qayerda
 
 ```
